@@ -1,26 +1,30 @@
 import {test, expect} from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage';
+
+import { CartPage } from '../pages/CartPage';
+
+
 
 test('check cart page', async ({page})=>{
 
-    await page.goto('https://www.saucedemo.com/')
 
-    await page.fill("#user-name","standard_user");
-    await page.fill("#password","secret_sauce");
+        const loginPage = new LoginPage(page);
+        const cart  = new CartPage(page);
 
-    await page.click('#login-button');
+        await loginPage.goto()
+        await loginPage.login('standard_user','secret_sauce')
 
-     await expect(page).toHaveURL(/inventory/)
+        await expect(page).toHaveURL(/inventory/)
 
-    
-        await page.click("#add-to-cart-sauce-labs-backpack");
+        await cart.addBackpack()
+        await cart.addFleeceJacket()
+        await cart.openCart()
+
+        await cart.removeBackPack();
+
+        await expect(cart.getCartItems()).toHaveCount(1);
+       
+
         
-        //go to cart
-
-        await page.click('.shopping_cart_link');
-        //assert
-        
-        const cartItem = page.locator(".cart_item");
-
-        await expect(cartItem).toHaveCount(1);
    
 })
